@@ -1,5 +1,12 @@
 - [x] Make the elevation profile graph interactive
 - [-] Smooth out the data before calculating the slope, because the data seem to have some noise
-- [ ] Do calculations based on Pandas DFs
+- [ ] Do calculations based on Pandas DFs?
 - [ ] Add the slope classification to the interactive graph
 - [ ] Encapsulate the code in a class to make it easier to use
+- [ ] Other metrics
+    - [ ] Elevation gain / distance
+- [ ] Calculate overall difficulty metric
+- [ ] Add second route to the elevation profile graph
+- [ ] Make Streamlit app
+- [ ] Should I use an actual database, or is a CSV file enough?
+- [ ] Link elevation profile cursor to the position of the cursor on the map
