@@ -1,6 +1,6 @@
 - [x] Make the elevation profile graph interactive
 - [-] Smooth out the data before calculating the slope, because the data seem to have some noise
-- [ ] Do calculations based on Pandas DFs?
+- [/] Do calculations based on Pandas DFs?
 - [ ] Add the slope classification to the interactive graph
 - [ ] Encapsulate the code in a class to make it easier to use
 - [ ] Other metrics
