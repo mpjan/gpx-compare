@@ -1,8 +1,9 @@
 - [x] Make the elevation profile graph interactive
 - [-] Smooth out the data before calculating the slope, because the data seem to have some noise
 - [x] Do calculations based on Pandas DFs?
+- [/] Encapsulate the code in a class to make it easier to use
+    - Parei na parte dos mapas
 - [ ] Add the slope classification to the interactive graph
-- [ ] Encapsulate the code in a class to make it easier to use
 - [ ] Add round km markers to the map
 - [ ] Other metrics
     - [ ] Elevation gain / distance
