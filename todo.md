@@ -5,8 +5,9 @@
     - Parei na parte dos mapas
 - [ ] Add the slope classification to the interactive graph
 - [ ] Add round km markers to the map
+- [ ] Add waypoints as markers to the map and elevation profile
 - [ ] Other metrics
-    - [ ] Elevation gain / distance
+    - [x] Elevation gain / distance (elevation gain per km)
     - [ ] Longest ascent (horizontal and vertical distance)
     - [ ] Longest descent (horizontal and vertical distance)
 - [ ] Calculate overall difficulty metric

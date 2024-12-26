@@ -6,6 +6,8 @@ import plotly.express as px
 import folium
 import gpxpy
 
+plt.ioff()  # Turn off interactive mode
+
 class Route:
 
     HARD_SLOPE_THRESHOLD = 0.2 # Threshold to consider a section as hard (20% gradient)
@@ -145,8 +147,19 @@ class Route:
     
     @property
     def avg_elevation_gain_per_km(self):
-        """The percentage of the total distance that is uphill."""
+        """The average elevation gain per km."""
         return (self.elevation_gain / (self.total_distance / 1000))
+    
+    @property
+    def hard_slope_percentage(self):
+        """The percentage of route with slopes above HARD_SLOPE_THRESHOLD.
+        
+        Returns:
+            float: Percentage of route with hard slopes (0.0-1.0)
+        """
+        hard_slopes = abs(self.df['slope_gradient']) > self.HARD_SLOPE_THRESHOLD
+        hard_slopes_percentage = hard_slopes.sum() / len(self.df)
+        return hard_slopes_percentage
 
     @property
     def center_coordinates(self):
@@ -165,3 +178,156 @@ class Route:
             'min_lon': self.df['longitude'].min(),
             'max_lon': self.df['longitude'].max()
         }
+    
+    def plot_map(self):
+        """Create an interactive map of the route.
+        
+        Returns:
+            folium.Map: Interactive map showing the route with start/end markers
+        """
+        # Create map with auto zoom based on center coordinates
+        map = folium.Map(
+            location=self.center_coordinates,
+            zoom_start=12,
+        )
+
+        # Fit bounds to the route
+        map.fit_bounds(
+            [
+                [self.bounds['min_lat'], self.bounds['min_lon']],  # Southwest corner
+                [self.bounds['max_lat'], self.bounds['max_lon']]   # Northeast corner
+            ]
+        )
+
+        # Add the route to the map
+        folium.PolyLine(
+            self.df[['latitude', 'longitude']].values,
+            weight=5,
+            color=self.COLORS['main'],
+            opacity=0.8
+        ).add_to(map)
+
+        # Add the start point to the map
+        folium.Marker(
+            location=self.df.iloc[0][['latitude', 'longitude']].values,
+            icon=folium.Icon(color='green', icon='circle'),
+            popup='Start'
+        ).add_to(map)
+
+        # Add the end point to the map
+        folium.Marker(
+            location=self.df.iloc[-1][['latitude', 'longitude']].values,
+            icon=folium.Icon(color='red', icon='circle'),
+            popup='Finish'
+        ).add_to(map)
+
+        return map
+    
+    def plot_elevation_profile(self):
+        """Create an interactive elevation profile plot.
+        
+        Returns:
+            plotly.graph_objects.Figure: Interactive elevation profile plot
+        """
+        # Create the plot
+        fig = px.line(
+            x=self.df['cum_distance_3d_km'],
+            y=self.df['elevation'],
+            title='Elevation Profile',
+            labels={
+                'x': 'Distance (km)',
+                'y': 'Elevation (m)'
+            }
+        )
+
+        # Update line style and add fill
+        fig.update_traces(
+            line_color=self.COLORS['main'],
+            line_width=2,
+            fill='tonexty',
+            fillcolor=f"rgba{tuple(int(self.COLORS['main'].lstrip('#')[i:i+2], 16) for i in (0, 2, 4)) + (0.1,)}",
+            mode='lines',
+        )
+
+        # Update layout
+        fig.update_layout(
+            showlegend=False,
+            plot_bgcolor='white',
+            width=900,
+            height=400,
+            hoverdistance=100,     # Maximum distance to show hover effect
+            spikedistance=100,     # Maximum distance to show spike
+            yaxis=dict(
+                range=[self.df['elevation'].min() - 50, self.df['elevation'].max() + 50],
+                tickformat='.0f',  # Format y-axis ticks to 1 decimal place
+                showline=True,
+                showgrid=True,
+                gridcolor='lightgrey',
+                showspikes=True,         # Show spike line
+                spikecolor=self.COLORS['main'],
+                spikesnap='data',      # Spike snaps to data points
+                spikemode='across',      # Spike goes across the plot
+                spikethickness=1
+            ),
+            xaxis=dict(
+                tickformat='.1f',  # Format x-axis ticks to 2 decimal places
+                showline=True,
+                showgrid=True,
+                gridcolor='lightgrey',
+                spikemode='across',
+                spikesnap='data',
+                spikethickness=1,
+                spikecolor=self.COLORS['main']
+            ),
+            yaxis_title='Elevation (m)',
+            xaxis_title='Distance (km)',
+        )
+
+        return fig
+    
+    def plot_slope_histogram(self):
+        """Create a histogram of the slope classifications.
+        
+        Returns:
+            matplotlib.figure.Figure: Histogram showing distribution of slopes
+        """
+        # Calculate slope distribution
+        slope_df = (
+            self.df
+            .groupby('slope_bin', observed=True)
+            .size()
+        )
+        
+        # Create figure
+        fig, ax = plt.subplots(figsize=(12, 6))
+        
+        # Plot the histogram
+        slope_df.plot(
+            kind='bar',
+            color=self.COLORS['main'],
+            ax=ax
+        )
+        
+        # Customize the plot
+        ax.set_title('Slope Distribution')
+        ax.set_xlabel('Slope Grade (%)')
+        ax.set_ylabel('Number of Points')
+        
+        # Rotate x-axis labels for better readability
+        plt.xticks(rotation=45, ha='right')
+        
+        # Add text showing percentage of hard slopes
+        hard_slope_text = f"Slopes > {100*self.HARD_SLOPE_THRESHOLD:.0f}%: {100*self.hard_slope_percentage:.1f}%"
+        plt.text(
+            0.95, 0.95, 
+            hard_slope_text,
+            transform=ax.transAxes,
+            horizontalalignment='right',
+            verticalalignment='top',
+            bbox=dict(facecolor='white', alpha=0.8)
+        )
+        
+        # Adjust layout to prevent label cutoff
+        plt.tight_layout()
+        
+        return fig
