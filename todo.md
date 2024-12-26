@@ -1,8 +1,9 @@
 - [x] Make the elevation profile graph interactive
 - [-] Smooth out the data before calculating the slope, because the data seem to have some noise
 - [x] Do calculations based on Pandas DFs?
-- [/] Encapsulate the code in a class to make it easier to use
-    - Parei na parte dos mapas
+- [x] Encapsulate the code in a class to make it easier to use
+- [ ] Add second route to the elevation profile graph
+- [ ] Make Streamlit app
 - [ ] Add the slope classification to the interactive graph
 - [ ] Add round km markers to the map
 - [ ] Add waypoints as markers to the map and elevation profile
@@ -12,7 +13,5 @@
     - [ ] Longest descent (horizontal and vertical distance)
 - [ ] Calculate overall difficulty metric
 - [ ] Add a scatter plot with all routes, with distance vs elevation gain
-- [ ] Add second route to the elevation profile graph
-- [ ] Make Streamlit app
 - [ ] Should I use an actual database, or is a CSV file enough?
 - [ ] Link elevation profile cursor to the position of the cursor on the map
