@@ -111,6 +111,8 @@ class Route:
                 cum_distance_2d_km=np.concatenate(
                     [[0], np.cumsum(self.distance_between_points_2d)/1000]
                 ),
+                #@!todo Calculate cumulative elevation
+                cum_elevation=np.cumsum(self.df['elevation_diff']),
                 # Calculate slope gradients
                 slope_gradient=lambda x: x['elevation_diff']/x['distance_between_points_2d'],
                 # Bin the slopes
@@ -381,7 +383,7 @@ class RouteGroup:
             
             fig.add_scatter(
                 x=route.df['cum_distance_3d_km'],
-                y=route.df['elevation'],
+                y=route.df['cum_elevation'],
                 name=label,
                 line=dict(color=color, width=2),
                 fill='tonexty',
@@ -389,8 +391,8 @@ class RouteGroup:
             )
 
         # Update layout
-        min_elevation = min(route.df['elevation'].min() for route in self.routes)
-        max_elevation = max(route.df['elevation'].max() for route in self.routes)
+        min_elevation = min(route.df['cum_elevation'].min() for route in self.routes)
+        max_elevation = max(route.df['cum_elevation'].max() for route in self.routes)
         
         fig.update_layout(
             showlegend=True,
@@ -419,7 +421,7 @@ class RouteGroup:
                 spikesnap='data',
                 spikethickness=1
             ),
-            yaxis_title='Elevation (m)',
+            yaxis_title='Cumulative Elevation (m)',
             xaxis_title='Distance (km)',
         )
 
