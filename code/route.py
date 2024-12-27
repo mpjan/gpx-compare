@@ -12,7 +12,7 @@ class Route:
 
     HARD_SLOPE_THRESHOLD = 0.2 # Threshold to consider a section as hard (20% gradient)
     COLORS = {
-        'main': '#f53b57',
+        'main': '#ff3f34',
         'secondary': '#3c40c6',
         'tertiary': '#ffdd59',
     }
@@ -188,9 +188,22 @@ class Route:
             folium.Map: Interactive map showing the route with start/end markers
         """
         # Create map with auto zoom based on center coordinates
+        attr = (
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> '
+            'contributors, &copy; <a href="http://viewfinderpanoramas.org">SRTM</a>'
+            '| Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> '
+            '(<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+        )
+        tiles = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
+        
         map = folium.Map(
             location=self.center_coordinates,
             zoom_start=12,
+            # This tileset is good because it shows the terrain, but it takes a little longer to load
+            tiles=tiles,
+            attr=attr,
+            control_scale=True,  # Add distance scale
+            prefer_canvas=True   # Better performance for large datasets
         )
 
         # Fit bounds to the route
@@ -206,20 +219,20 @@ class Route:
             self.df[['latitude', 'longitude']].values,
             weight=5,
             color=self.COLORS['main'],
-            opacity=0.8
+            opacity=0.8,
         ).add_to(map)
 
         # Add the start point to the map
         folium.Marker(
             location=self.df.iloc[0][['latitude', 'longitude']].values,
-            icon=folium.Icon(color='green', icon='circle'),
+            icon=folium.Icon(color='green', icon='play'),
             popup='Start'
         ).add_to(map)
 
         # Add the end point to the map
         folium.Marker(
             location=self.df.iloc[-1][['latitude', 'longitude']].values,
-            icon=folium.Icon(color='red', icon='circle'),
+            icon=folium.Icon(color='red', icon='stop'),
             popup='Finish'
         ).add_to(map)
 
