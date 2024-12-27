@@ -2,8 +2,8 @@
 - [-] Smooth out the data before calculating the slope, because the data seem to have some noise
 - [x] Do calculations based on Pandas DFs?
 - [x] Encapsulate the code in a class to make it easier to use
-- [/] Add second route to the elevation profile graph
-- [ ] Make Streamlit app
+- [x] Add second route to the elevation profile graph
+- [/] Make Streamlit app
 - [ ] Add metadata to GPX files
     - Event name
     - Event date

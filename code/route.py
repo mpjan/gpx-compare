@@ -400,6 +400,13 @@ class RouteGroup:
         
         fig.update_layout(
             showlegend=True,
+            legend=dict(
+                orientation="h",    # horizontal orientation
+                yanchor="bottom",  # anchor point
+                y=1.02,           # position slightly above the plot
+                xanchor="right",  # anchor point
+                x=1              # position at the right
+            ),
             plot_bgcolor='white',
             width=900,
             height=400,
