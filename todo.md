@@ -2,8 +2,14 @@
 - [-] Smooth out the data before calculating the slope, because the data seem to have some noise
 - [x] Do calculations based on Pandas DFs?
 - [x] Encapsulate the code in a class to make it easier to use
-- [ ] Add second route to the elevation profile graph
+- [/] Add second route to the elevation profile graph
 - [ ] Make Streamlit app
+- [ ] Add metadata to GPX files
+    - Event name
+    - Event date
+    - Event city
+    - Event state
+    - Event country
 - [ ] Add the slope classification to the interactive graph
 - [ ] Add round km markers to the map
 - [ ] Add waypoints as markers to the map and elevation profile
