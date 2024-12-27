@@ -386,8 +386,12 @@ class RouteGroup:
                 y=route.df['cum_elevation'],
                 name=label,
                 line=dict(color=color, width=2),
-                fill='tonexty',
-                fillcolor=f"rgba{tuple(int(color.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)) + (0.1,)}",
+                hovertemplate=(
+                    f"{label}<br>"
+                    "Distance: %{x:.1f} km<br>"
+                    "Cumulative Elevation: %{y:.0f} m"
+                    "<extra></extra>"
+                ),
             )
 
         # Update layout
@@ -399,8 +403,9 @@ class RouteGroup:
             plot_bgcolor='white',
             width=900,
             height=400,
-            hoverdistance=100,
-            spikedistance=100,
+            hoverdistance=100,     # Maximum distance to show hover effect
+            spikedistance=100,     # Maximum distance to show spike
+            hovermode='x',         # Show all points at the same x-coordinate
             yaxis=dict(
                 range=[min_elevation - 50, max_elevation + 50],
                 tickformat='.0f',
