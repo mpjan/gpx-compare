@@ -21,3 +21,4 @@
 - [ ] Add a scatter plot with all routes, with distance vs elevation gain
 - [ ] Should I use an actual database, or is a CSV file enough?
 - [ ] Link elevation profile cursor to the position of the cursor on the map
+- [ ] Add an option to view the topographical map tiles
