@@ -331,3 +331,115 @@ class Route:
         plt.tight_layout()
         
         return fig
+    
+class RouteGroup:
+    """A class to handle operations on multiple routes."""
+    
+    def __init__(self, routes=None, labels=None):
+        """Initialize RouteGroup with a list of routes.
+        
+        Args:
+            routes (list[Route], optional): List of Route objects. Defaults to None.
+            labels (list[str], optional): Labels for each route. Defaults to None.
+        """
+        self.routes = routes or []
+        self.labels = labels or [f"Route {i+1}" for i in range(len(self.routes))]
+        
+        if len(self.labels) != len(self.routes):
+            raise ValueError("Number of labels must match number of routes")
+    
+    def add_route(self, route, label=None):
+        """Add a route to the group.
+        
+        Args:
+            route (Route): Route object to add
+            label (str, optional): Label for the route. Defaults to "Route {n}"
+        """
+        self.routes.append(route)
+        self.labels.append(label or f"Route {len(self.routes)}")
+    
+    def plot_elevation_comparison(self):
+        """Create an interactive plot comparing elevation profiles of all routes.
+        
+        Returns:
+            plotly.graph_objects.Figure: Interactive elevation comparison plot
+        """
+        if not self.routes:
+            raise ValueError("No routes to compare")
+
+        # Create the plot
+        fig = px.line(
+            title='Elevation Profile Comparison'
+        )
+
+        # Color cycle for multiple routes
+        colors = [Route.COLORS['main'], Route.COLORS['secondary'], Route.COLORS['tertiary']]
+        
+        # Add each route to the plot
+        for i, (route, label) in enumerate(zip(self.routes, self.labels)):
+            color = colors[i % len(colors)]  # Cycle through colors if more routes than colors
+            
+            fig.add_scatter(
+                x=route.df['cum_distance_3d_km'],
+                y=route.df['elevation'],
+                name=label,
+                line=dict(color=color, width=2),
+                fill='tonexty',
+                fillcolor=f"rgba{tuple(int(color.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)) + (0.1,)}",
+            )
+
+        # Update layout
+        min_elevation = min(route.df['elevation'].min() for route in self.routes)
+        max_elevation = max(route.df['elevation'].max() for route in self.routes)
+        
+        fig.update_layout(
+            showlegend=True,
+            plot_bgcolor='white',
+            width=900,
+            height=400,
+            hoverdistance=100,
+            spikedistance=100,
+            yaxis=dict(
+                range=[min_elevation - 50, max_elevation + 50],
+                tickformat='.0f',
+                showline=True,
+                showgrid=True,
+                gridcolor='lightgrey',
+                showspikes=True,
+                spikesnap='data',
+                spikemode='across',
+                spikethickness=1
+            ),
+            xaxis=dict(
+                tickformat='.1f',
+                showline=True,
+                showgrid=True,
+                gridcolor='lightgrey',
+                spikemode='across',
+                spikesnap='data',
+                spikethickness=1
+            ),
+            yaxis_title='Elevation (m)',
+            xaxis_title='Distance (km)',
+        )
+
+        return fig
+    
+    def compare_stats(self):
+        """Compare key statistics between routes.
+        
+        Returns:
+            pd.DataFrame: DataFrame with route statistics
+        """
+        stats = []
+        for route, label in zip(self.routes, self.labels):
+            stats.append({
+                'Route': label,
+                'Distance (km)': round(route.total_distance / 1000, 1),
+                'Elevation Gain (m)': round(route.elevation_gain),
+                'Elevation Loss (m)': round(route.elevation_loss),
+                'Avg Gain per km (m)': round(route.avg_elevation_gain_per_km),
+                'Hard Slopes (%)': round(route.hard_slope_percentage * 100, 1)
+            })
+        
+        return pd.DataFrame(stats)
