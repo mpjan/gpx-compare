@@ -3,7 +3,7 @@
 - [x] Do calculations based on Pandas DFs?
 - [x] Encapsulate the code in a class to make it easier to use
 - [x] Add second route to the elevation profile graph
-- [/] Make Streamlit app
+- [ ] Make Streamlit app
 - [ ] Add metadata to GPX files
     - Event name
     - Event date
