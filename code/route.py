@@ -5,18 +5,15 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import folium
 import gpxpy
+from viz_constants import COLORS
 
 plt.ioff()  # Turn off interactive mode
 
 class Route:
-
-    HARD_SLOPE_THRESHOLD = 0.2 # Threshold to consider a section as hard (20% gradient)
-    COLORS = {
-        'main': '#ff3f34',
-        'secondary': '#3c40c6',
-        'tertiary': '#ffdd59',
-    }
-
+    """A class to handle GPX route data and analysis."""
+    
+    HARD_SLOPE_THRESHOLD = 0.2  # Threshold to consider a section as hard (20% gradient)
+    
     def __init__(self, gpx_file_path):
         self.gpx_file_path = gpx_file_path
         
@@ -218,7 +215,7 @@ class Route:
         folium.PolyLine(
             self.df[['latitude', 'longitude']].values,
             weight=5,
-            color=self.COLORS['main'],
+            color=COLORS['main'],
             opacity=0.8,
         ).add_to(map)
 
@@ -248,20 +245,20 @@ class Route:
         fig = px.line(
             x=self.df['cum_distance_3d_km'],
             y=self.df['elevation'],
-            title='Elevation Profile',
             labels={
-                'x': 'Distance (km)',
-                'y': 'Elevation (m)'
+                'x': 'Distância (km)',
+                'y': 'Elevação (m)'
             }
         )
 
         # Update line style and add fill
         fig.update_traces(
-            line_color=self.COLORS['main'],
-            line_width=2,
+            line_color=COLORS['main'],
+            line_width=4,
             fill='tonexty',
-            fillcolor=f"rgba{tuple(int(self.COLORS['main'].lstrip('#')[i:i+2], 16) for i in (0, 2, 4)) + (0.1,)}",
+            fillcolor=f"rgba{tuple(int(COLORS['main'].lstrip('#')[i:i+2], 16) for i in (0, 2, 4)) + (0.1,)}",
             mode='lines',
+            hovertemplate='Distância: %{x:.1f} km<br>Elevação: %{y:,.0f} m<extra></extra>'
         )
 
         # Update layout
@@ -274,28 +271,28 @@ class Route:
             spikedistance=100,     # Maximum distance to show spike
             yaxis=dict(
                 range=[self.df['elevation'].min() - 50, self.df['elevation'].max() + 50],
-                tickformat='.0f',  # Format y-axis ticks to 1 decimal place
-                showline=True,
+                tickformat=',.0f',  # Format y-axis ticks to 1 decimal place
+                showline=False,
                 showgrid=True,
                 gridcolor='lightgrey',
                 showspikes=True,         # Show spike line
-                spikecolor=self.COLORS['main'],
+                spikecolor=COLORS['main'],
                 spikesnap='data',      # Spike snaps to data points
                 spikemode='across',      # Spike goes across the plot
                 spikethickness=1
             ),
             xaxis=dict(
-                tickformat='.1f',  # Format x-axis ticks to 2 decimal places
-                showline=True,
+                tickformat='.0f',  # Format x-axis ticks to 2 decimal places
+                showline=False,
                 showgrid=True,
                 gridcolor='lightgrey',
                 spikemode='across',
                 spikesnap='data',
                 spikethickness=1,
-                spikecolor=self.COLORS['main']
+                spikecolor=COLORS['main']
             ),
-            yaxis_title='Elevation (m)',
-            xaxis_title='Distance (km)',
+            yaxis_title='Elevação (m)',
+            xaxis_title='Distância (km)',
         )
 
         return fig
@@ -319,7 +316,7 @@ class Route:
         # Plot the histogram
         slope_df.plot(
             kind='bar',
-            color=self.COLORS['main'],
+            color=COLORS['main'],
             ax=ax
         )
         
@@ -388,7 +385,7 @@ class RouteGroup:
         )
 
         # Color cycle for multiple routes
-        colors = [Route.COLORS['main'], Route.COLORS['secondary'], Route.COLORS['tertiary']]
+        colors = [v for v in COLORS.values()]
         
         # Add each route to the plot
         for i, (route, label) in enumerate(zip(self.routes, self.labels)):
