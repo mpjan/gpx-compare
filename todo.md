@@ -3,7 +3,7 @@
 - [x] Do calculations based on Pandas DFs?
 - [x] Encapsulate the code in a class to make it easier to use
 - [x] Add second route to the elevation profile graph
-- [ ] Make Streamlit app
+- [/] Make Streamlit app
 - [ ] Add metadata to GPX files
     - Event name
     - Event date
@@ -22,3 +22,6 @@
 - [ ] Should I use an actual database, or is a CSV file enough?
 - [ ] Link elevation profile cursor to the position of the cursor on the map
 - [ ] Add an option to view the topographical map tiles
+- [ ] Adicionar um mapa mundi com todas as corridas na base
+- [ ] Add a way to manually analyze segment slopes in a route
+- [ ] Add an email signup box to the top of the page
