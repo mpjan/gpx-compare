@@ -57,6 +57,10 @@ class Route:
                 self.coordinates,
                 columns=['latitude', 'longitude', 'elevation']
             )
+            # Convert to numeric, handling any non-numeric values
+            .apply(pd.to_numeric, errors='coerce')
+            # There may be missing values in the data, so we interpolate any
+            .interpolate(method='linear', limit_direction='both')
             .assign(
                 # We add a 0 at the beginning to match the length of the DF
                 elevation_diff=lambda x: np.concatenate(
