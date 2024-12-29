@@ -4,6 +4,8 @@ import os
 from route import Route
 from viz_constants import COLORS
 
+GPX_FILE_PATH = '../gpx/'
+
 # Page config
 st.set_page_config(
   page_title="Explore Rotas",
@@ -11,22 +13,22 @@ st.set_page_config(
   layout='wide'
 )
 
-GPX_FILE_PATH = '../gpx/'
-
 # Sidebar
 with st.sidebar:
-  # st.header("Selecione uma rota")
+  st.write('🗺️ Explore rotas')
+  st.write('🏃 Eventos')
+  st.write('🌍 Mapa mundi')
   
-  # GPX file selection
-  gpx_files = [f for f in os.listdir(GPX_FILE_PATH) if f.endswith('.gpx')]
-  gpx_files.sort()
+# GPX file selection
+gpx_files = [f for f in os.listdir(GPX_FILE_PATH) if f.endswith('.gpx')]
+gpx_files.sort()
 
-  selected_gpx = st.selectbox(
-    'Selecione uma rota',
-    gpx_files,
-    index=None,
-    placeholder='Escolha uma rota...'
-  )
+selected_gpx = st.selectbox(
+  'Selecione uma rota',
+  gpx_files,
+  index=None,
+  placeholder='Selecione uma rota...'
+)
 
 # Title
 if selected_gpx:
@@ -79,6 +81,3 @@ if selected_gpx:
     width='100%',
     height=500
   )
-
-else:
-  st.info('👈 Selecione uma rota ao lado para começar')
