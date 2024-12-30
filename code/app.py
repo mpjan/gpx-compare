@@ -23,7 +23,7 @@ with st.sidebar:
 gpx_files = [f for f in os.listdir(GPX_FILE_PATH) if f.endswith('.gpx')]
 gpx_files.sort()
 
-route1_col, route2_col = st.columns(2)
+route1_col, route2_col, col3 = st.columns(3)
 
 with route1_col:
   selected_route_name_1 = st.selectbox(
@@ -88,7 +88,7 @@ if selected_route_name_1:
 
     # Map
     st.subheader('Mapa')
-    map_fig = route1.plot_map()
+    map_fig = route1.plot_map(COLORS['main'])
     st_folium(
       map_fig,
       width='100%',
@@ -100,13 +100,13 @@ if selected_route_name_1:
     # Titles
     with route1_col:
       st.markdown(
-        f"<h1 style='color: {COLORS['main']}'>{selected_route_name_1}</h1>",
+        f"<h2 style='color: {COLORS['main']}'>{selected_route_name_1}</h2>",
         unsafe_allow_html=True
       )
     
     with route2_col:
       st.markdown(
-        f"<h1 style='color: {COLORS['secondary']}'>{selected_route_name_2}</h1>",
+        f"<h2 style='color: {COLORS['secondary']}'>{selected_route_name_2}</h2>",
         unsafe_allow_html=True
       )
 
@@ -122,77 +122,70 @@ if selected_route_name_1:
     
     # Compare stats
     stats_df = route_group.compare_stats()
-    
-    col1, col2, col3, col4 = st.columns(4)
 
-    st.container().markdown(
-      f"""
-      <div style='display: grid; grid-template-columns: 1fr 1fr 1fr'>
-        <div style='text-align: right'><h3>Distância</h3></div>
-        <div><h3 style='color: {COLORS["main"]}'>{stats_df.loc['Distance (km)'][selected_route_name_1]:.1f} km</h3></div>
-        <div><h3 style='color: {COLORS["secondary"]}'>{stats_df.loc['Distance (km)'][selected_route_name_2]:.1f} km</h3></div>
-      </div>
-      """,
-      unsafe_allow_html=True
-    )
+    # Create comparison table
+    comparison_table = f"""
+    <style>
+      table, tr, td, th {{
+        border: none !important;
+        border-collapse: collapse !important;
+        border-spacing: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }}
+    </style>
+    <table width="100%">
+      <tr>
+        <td width="33%"><h4 style="color: {COLORS['main']}">{stats_df.loc['Distance (km)'][selected_route_name_1]:.1f} km</h4></td>
+        <td width="33%"><h4 style="color: {COLORS['secondary']}">{stats_df.loc['Distance (km)'][selected_route_name_2]:.1f} km</h4></td>
+        <td><h4>Distância</h4></td>
+      </tr>
+      <tr>
+        <td><h4 style="color: {COLORS['main']}">{stats_df.loc['Elevation Gain (m)'][selected_route_name_1]:,.0f} m</h4></td>
+        <td><h4 style="color: {COLORS['secondary']}">{stats_df.loc['Elevation Gain (m)'][selected_route_name_2]:,.0f} m</h4></td>
+        <td><h4>Ganho de elevação</h4></td>
+      </tr>
+      <tr>
+        <td><h4 style="color: {COLORS['main']}">{stats_df.loc['Elevation Loss (m)'][selected_route_name_1]:,.0f} m</h4></td>
+        <td><h4 style="color: {COLORS['secondary']}">{stats_df.loc['Elevation Loss (m)'][selected_route_name_2]:,.0f} m</h4></td>
+        <td><h4>Perda de elevação</h4></td>
+      </tr>
+      <tr>
+        <td><h4 style="color: {COLORS['main']}">{stats_df.loc['Avg Gain per km (m)'][selected_route_name_1]:.1f} m</h4></td>
+        <td><h4 style="color: {COLORS['secondary']}">{stats_df.loc['Avg Gain per km (m)'][selected_route_name_2]:.1f} m</h4></td>
+        <td><h4>Ganho médio</h4></td>
+      </tr>
+      <tr>
+        <td><h4 style="color: {COLORS['main']}">{stats_df.loc['Hard Slopes (%)'][selected_route_name_1]:.1f}%</h4></td>
+        <td><h4 style="color: {COLORS['secondary']}">{stats_df.loc['Hard Slopes (%)'][selected_route_name_2]:.1f}%</h4></td>
+        <td><h4>Subidas íngremes</h4></td>
+      </tr>
+    </table>
+    """
 
-    st.container().markdown(
-      f"""
-      <div style='display: grid; grid-template-columns: 1fr 1fr 1fr'>
-        <div style='text-align: right'><h3>Ganho de elevação</h3></div>
-        <div><h3 style='color: {COLORS["main"]}'>{stats_df.loc['Elevation Gain (m)'][selected_route_name_1]:,.0f} m</h3></div>
-        <div><h3 style='color: {COLORS["secondary"]}'>{stats_df.loc['Elevation Gain (m)'][selected_route_name_2]:,.0f} m</h3></div>
-      </div>
-      """,
-      unsafe_allow_html=True
-    )
+    st.markdown(comparison_table, unsafe_allow_html=True)
 
-    st.container().markdown(
-      f"""
-      <div style='display: grid; grid-template-columns: 1fr 1fr 1fr'>
-        <div style='text-align: right'><h3>Perda de elevação</h3></div>
-        <div><h3 style='color: {COLORS["main"]}'>{stats_df.loc['Elevation Loss (m)'][selected_route_name_1]:,.0f} m</h3></div>
-        <div><h3 style='color: {COLORS["secondary"]}'>{stats_df.loc['Elevation Loss (m)'][selected_route_name_2]:,.0f} m</h3></div>
-      </div>
-      """,
-      unsafe_allow_html=True
-    )
-    
-    st.container().markdown(
-      f"""
-      <div style='display: grid; grid-template-columns: 1fr 1fr 1fr'>
-        <div style='text-align: right'><h3>Ganho médio</h3></div>
-        <div><h3 style='color: {COLORS["main"]}'>{stats_df.loc['Avg Gain per km (m)'][selected_route_name_1]:.0f} m</h3></div>
-        <div><h3 style='color: {COLORS["secondary"]}'>{stats_df.loc['Avg Gain per km (m)'][selected_route_name_2]:.0f} m</h3></div>
-      </div>
-      """,
-      unsafe_allow_html=True,
-    )
-    
-    st.container().markdown(
-      f"""
-      <div style='display: grid; grid-template-columns: 1fr 1fr 1fr'>
-        <div style='text-align: right'><h3>Subidas íngremes</h3></div>
-        <div><h3 style='color: {COLORS["main"]}'>{stats_df.loc['Hard Slopes (%)'][selected_route_name_1]:.1f}%</h3></div>
-        <div><h3 style='color: {COLORS["secondary"]}'>{stats_df.loc['Hard Slopes (%)'][selected_route_name_2]:.1f}%</h3></div>
-      </div>
-      """,
-      unsafe_allow_html=True
-    )
-        
     # Elevation comparison
     st.subheader('Perfil de elevação')
     elevation_fig = route_group.plot_elevation_comparison()
     st.plotly_chart(elevation_fig, use_container_width=True)
     
-    # Maps side by side
+    # Plot routes on map
     st.subheader('Mapas')
-    map1_col, map2_col = st.columns(2)
-    
-    with map1_col:
-      map1 = route1.plot_map()
-      st_folium(map1, width='100%', height=400)
+
+    # Calculate distance between routes
+    distance = route_group.calculate_routes_distance()
+
+    if distance < 50_000:
+      map_fig = route_group.plot_combined_map()
+      st_folium(map_fig, width='100%', height=500)
+    else:
+      map1_col, map2_col = st.columns(2)
       
-    with map2_col:
-      map2 = route2.plot_map()
-      st_folium(map2, width='100%', height=400)
+      with map1_col:
+        map1 = route1.plot_map(COLORS['main'])
+        st_folium(map1, width='100%', height=500)
+        
+      with map2_col:
+        map2 = route2.plot_map(COLORS['secondary'])
+        st_folium(map2, width='100%', height=500)

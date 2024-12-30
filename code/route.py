@@ -182,7 +182,7 @@ class Route:
             'max_lon': self.df['longitude'].max()
         }
     
-    def plot_map(self):
+    def plot_map(self, color):
         """Create an interactive map of the route.
         
         Returns:
@@ -219,7 +219,7 @@ class Route:
         folium.PolyLine(
             self.df[['latitude', 'longitude']].values,
             weight=5,
-            color=COLORS['main'],
+            color=color,
             opacity=0.8,
         ).add_to(map)
 
@@ -363,7 +363,7 @@ class RouteGroup:
         
         if len(self.labels) != len(self.routes):
             raise ValueError("Number of labels must match number of routes")
-    
+
     def add_route(self, route, label=None):
         """Add a route to the group.
         
@@ -374,6 +374,31 @@ class RouteGroup:
         self.routes.append(route)
         self.labels.append(label or f"Route {len(self.routes)}")
     
+    def compare_stats(self):
+        """Compare key statistics between routes.
+        
+        Returns:
+            pd.DataFrame: DataFrame with route statistics
+        """
+        stats = []
+        for route, label in zip(self.routes, self.labels):
+            stats.append({
+                'Route': label,
+                'Distance (km)': round(route.total_distance / 1000, 1),
+                'Elevation Gain (m)': round(route.elevation_gain),
+                'Elevation Loss (m)': round(route.elevation_loss),
+                'Avg Gain per km (m)': round(route.avg_elevation_gain_per_km, 1),
+                'Hard Slopes (%)': round(route.hard_slope_percentage * 100, 1)
+            })
+
+        df = (
+            pd.DataFrame(stats)
+            .set_index('Route')
+            .T
+        )
+        
+        return df
+
     def plot_elevation_comparison(self):
         """Create an interactive plot comparing elevation profiles of all routes.
         
@@ -452,28 +477,93 @@ class RouteGroup:
         )
 
         return fig
-    
-    def compare_stats(self):
-        """Compare key statistics between routes.
+
+    def calculate_routes_distance(self):
+        """Calculate the distance between the center points of routes.
         
         Returns:
-            pd.DataFrame: DataFrame with route statistics
+            float: Distance in meters between route centers
         """
-        stats = []
-        for route, label in zip(self.routes, self.labels):
-            stats.append({
-                'Route': label,
-                'Distance (km)': round(route.total_distance / 1000, 1),
-                'Elevation Gain (m)': round(route.elevation_gain),
-                'Elevation Loss (m)': round(route.elevation_loss),
-                'Avg Gain per km (m)': round(route.avg_elevation_gain_per_km),
-                'Hard Slopes (%)': round(route.hard_slope_percentage * 100, 1)
-            })
+        if len(self.routes) != 2:
+            return 0
+            
+        center1 = self.routes[0].center_coordinates
+        center2 = self.routes[1].center_coordinates
 
-        df = (
-            pd.DataFrame(stats)
-            .set_index('Route')
-            .T
+        distance = gpxpy.geo.distance(
+            center1[0], center1[1], 0,  # lat1, lon1, elevation1
+            center2[0], center2[1], 0   # lat2, lon2, elevation2
         )
+
+        return distance
+
+    def plot_combined_map(self):
+        """Create an interactive map showing all routes in the group.
         
-        return df
+        Returns:
+            folium.Map: Interactive map showing all routes with different colors
+        """
+        # Get bounds for all routes
+        min_lat = min(route.bounds['min_lat'] for route in self.routes)
+        max_lat = max(route.bounds['max_lat'] for route in self.routes)
+        min_lon = min(route.bounds['min_lon'] for route in self.routes)
+        max_lon = max(route.bounds['max_lon'] for route in self.routes)
+        
+        # Calculate center point of all routes
+        center_lat = (min_lat + max_lat) / 2
+        center_lon = (min_lon + max_lon) / 2
+
+        # Create base map
+        attr = (
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> '
+            'contributors, &copy; <a href="http://viewfinderpanoramas.org">SRTM</a>'
+            '| Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> '
+            '(<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+        )
+        tiles = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
+        
+        map = folium.Map(
+            location=[center_lat, center_lon],
+            zoom_start=12,
+            tiles=tiles,
+            attr=attr,
+            control_scale=True,
+            prefer_canvas=True
+        )
+
+        # Fit bounds to include all routes
+        map.fit_bounds(
+            [[min_lat, min_lon], [max_lat, max_lon]]
+        )
+
+        # Color cycle for multiple routes
+        colors = [v for v in COLORS.values()]
+
+        # Add each route to the map
+        for i, (route, label) in enumerate(zip(self.routes, self.labels)):
+            color = colors[i % len(colors)]
+            
+            # Add route line
+            folium.PolyLine(
+                route.df[['latitude', 'longitude']].values,
+                weight=5,
+                color=color,
+                opacity=0.8,
+                popup=label,
+            ).add_to(map)
+
+            # Add start marker
+            folium.Marker(
+                location=route.df.iloc[0][['latitude', 'longitude']].values,
+                icon=folium.Icon(color='green', icon='play'),
+                popup=f'{label} Start'
+            ).add_to(map)
+
+            # Add end marker
+            folium.Marker(
+                location=route.df.iloc[-1][['latitude', 'longitude']].values,
+                icon=folium.Icon(color='red', icon='stop'),
+                popup=f'{label} Finish'
+            ).add_to(map)
+
+        return map
