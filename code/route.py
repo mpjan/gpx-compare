@@ -469,5 +469,11 @@ class RouteGroup:
                 'Avg Gain per km (m)': round(route.avg_elevation_gain_per_km),
                 'Hard Slopes (%)': round(route.hard_slope_percentage * 100, 1)
             })
+
+        df = (
+            pd.DataFrame(stats)
+            .set_index('Route')
+            .T
+        )
         
-        return pd.DataFrame(stats)
+        return df
