@@ -4,7 +4,7 @@ import os
 from route import Route, RouteGroup
 from viz_constants import COLORS
 
-GPX_FILE_PATH = '../gpx/'
+GPX_FILE_PATH = '../data/gpx/'
 
 # Page config
 st.set_page_config(
@@ -30,7 +30,7 @@ with route1_col:
     'Selecione uma rota',
     gpx_files,
     index=None,
-    placeholder='Selecione uma rota...'
+    placeholder='Digite ou selecione...'
   )
 
 # Main content
@@ -41,7 +41,7 @@ if selected_route_name_1:
       'Comparar com',
       [f for f in gpx_files if f != selected_route_name_1],  # Exclude first selected route
       index=None,
-      placeholder='Selecione uma rota...'
+      placeholder='Digite ou selecione...'
     )
 
   if selected_route_name_1 and not selected_route_name_2:

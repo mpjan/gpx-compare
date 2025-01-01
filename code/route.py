@@ -424,7 +424,7 @@ class RouteGroup:
                 x=route.df['cum_distance_3d_km'],
                 y=route.df['cum_elevation'],
                 name=label,
-                line=dict(color=color, width=2),
+                line=dict(color=color, width=4),
                 hovertemplate=(
                     f"{label}<br>"
                     "Distance: %{x:.1f} km<br>"

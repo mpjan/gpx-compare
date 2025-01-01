@@ -1,0 +1,13 @@
+<event_series></event_series>
+<event_name></event_name>
+<event_category></event_category>
+<event_date></event_date>
+<event_year></event_year>
+<event_coords></event_coords>
+<event_city></event_city>
+<event_country></event_country>
+<event_url></event_url>
+<event_type></event_type>
+<distance></distance>
+<elevation></elevation>
+<avg_elevation_gain_per_km></avg_elevation_gain_per_km>
