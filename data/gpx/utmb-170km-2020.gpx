@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.1" creator="Trace de Trail" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
   <metadata>
-    <event_series>UTMB</event_series>
-    <event_name>UTMB</event_name>
-    <event_date></event_date>
-    <event_year></event_year>
-    <event_coords></event_coords>
-    <event_city></event_city>
-    <event_country></event_country>
-    <event_url></event_url>
-    <event_type></event_type>
-    <distance></distance>
-    <elevation></elevation>
-    <avg_elevation_gain_per_km></avg_elevation_gain_per_km>
-    <name>Ultra Trail du Mont Blanc 2020 - UTMB</name>
+    <name>UTMB 2020</name>
     <desc>Parcours créé sur Trace de Trail</desc>
     <link href="https://tracedetrail.fr/en/trace/111620">
       <text>Cartographie du parcours</text>

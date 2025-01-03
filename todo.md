@@ -5,11 +5,9 @@
 - [x] Add second route to the elevation profile graph
 - [/] Make Streamlit app
 - [ ] Add metadata to GPX files
-    - Event name
-    - Event date
-    - Event city
-    - Event state
-    - Event country
+    - Event name *
+    - Event category *
+    - Event year *
 - [ ] Add the slope classification to the interactive graph
 - [ ] Add round km markers to the map
 - [ ] Add waypoints as markers to the map and elevation profile
