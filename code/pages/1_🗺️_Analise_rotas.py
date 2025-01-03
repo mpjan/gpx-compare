@@ -8,16 +8,10 @@ GPX_FILE_PATH = '../data/gpx/'
 
 # Page config
 st.set_page_config(
-  page_title="Explore Rotas",
+  page_title="Analise rotas",
   page_icon='🗺️',
   layout='wide'
 )
-
-# Sidebar
-with st.sidebar:
-  st.write('🗺️ Explore rotas')
-  st.write('🏃 Eventos')
-  st.write('🌍 Mapa mundi')
   
 # GPX file selection
 gpx_files = [f for f in os.listdir(GPX_FILE_PATH) if f.endswith('.gpx')]
