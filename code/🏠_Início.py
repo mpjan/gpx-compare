@@ -39,18 +39,34 @@ df = (
   })
 )
 
-st.markdown('## Lista')
+##############################################
 
-st.dataframe(
-  df,
-  column_order=[
-    'Rota',
-    'Distância (km)',
-    'Ganho médio por km (m)'
-  ],
-  hide_index=True,
-  use_container_width=True
+st.markdown('## Mapa mundi')
+
+# Create a base map centered on the mean coordinates
+m = folium.Map(
+    location=[-17, -50],
+    # location=[df.data['latitude'].mean(), df.data['longitude'].mean()],
+    zoom_start=5,
+    control_scale=True,  # Add distance scale
+    prefer_canvas=True   # Better performance for large datasets
 )
+
+# Add markers for each route
+for idx, row in df.data.iterrows():
+    folium.Circle(
+        location=[row['latitude'], row['longitude']],
+        radius=2_000,
+        tooltip=row['Rota'],
+        color=COLORS['main'],
+        fill=True,
+        fill_opacity=0.3,
+    ).add_to(m)
+
+# Display the map
+st_folium(m, use_container_width=True)
+
+##############################################
 
 st.markdown('## Distância vs elevação')
 
@@ -69,24 +85,17 @@ fig.update_traces(
 # Display the plot
 st.plotly_chart(fig, use_container_width=True)
 
-st.markdown('## Mapa mundi')
+##############################################
 
-# Create a base map centered on the mean coordinates
-m = folium.Map(
-    location=[df.data['latitude'].mean(), df.data['longitude'].mean()],
-    zoom_start=2
+st.markdown('## Lista')
+
+st.dataframe(
+  df,
+  column_order=[
+    'Rota',
+    'Distância (km)',
+    'Ganho médio por km (m)'
+  ],
+  hide_index=True,
+  use_container_width=True
 )
-
-# Add markers for each route
-for idx, row in df.data.iterrows():
-    folium.Circle(
-        location=[row['latitude'], row['longitude']],
-        radius=2_000,
-        tooltip=row['Rota'],
-        color=COLORS['main'],
-        fill=True,
-        fill_opacity=0.3
-    ).add_to(m)
-
-# Display the map
-st_folium(m, use_container_width=True)
