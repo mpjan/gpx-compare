@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import folium
 import gpxpy
-from viz_constants import COLORS
+from utils import COLORS
 
 plt.ioff()  # Turn off interactive mode
 
@@ -29,6 +29,10 @@ class Route:
         """
         # Read the GPX file
         self.gpx_file = gpxpy.parse(open(self.gpx_file_path))
+        self.file_name = self.gpx_file_path.split('/')[-1]
+
+        # Extract the route name
+        self.route_name = self.gpx_file.name
         
         # Only extract the first track and segment
         self.track = self.gpx_file.tracks[0]
@@ -62,11 +66,23 @@ class Route:
             # There may be missing values in the data, so we interpolate any
             .interpolate(method='linear', limit_direction='both')
             .assign(
+                # Add file_name and route_name
+                file_name=self.file_name,
+                route_name=self.route_name,
                 # We add a 0 at the beginning to match the length of the DF
                 elevation_diff=lambda x: np.concatenate(
                     [[0], np.diff(x['elevation'])]
                 )
             )
+            # Reorder columns to put file_name and route_name first
+            .reindex(columns=[
+                'file_name',
+                'route_name',
+                'latitude',
+                'longitude',
+                'elevation',
+                'elevation_diff'
+            ])
         )
         
         # Calculate the cumulative distances and slopes

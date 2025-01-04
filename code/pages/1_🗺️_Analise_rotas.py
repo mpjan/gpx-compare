@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_folium import st_folium
 import os
 from route import Route, RouteGroup
-from viz_constants import COLORS
+from utils import COLORS
 
 GPX_FILE_PATH = '../data/gpx/'
 
