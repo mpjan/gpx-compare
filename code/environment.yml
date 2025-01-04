@@ -1,0 +1,13 @@
+name: gpx-compare
+channels:
+  - https://repo.anaconda.com/pkgs/main
+  - https://repo.anaconda.com/pkgs/r
+dependencies:
+  - python=3.10
+  - matplotlib
+  - numpy
+  - pandas
+  - geopandas
+  - ipykernel
+  - tqdm
+prefix: /opt/anaconda3/envs/gpx-compare
