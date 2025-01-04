@@ -1,10 +1,12 @@
 import streamlit as st
 from streamlit_folium import st_folium
 import os
+import pandas as pd
 from route import Route, RouteGroup
 from utils import COLORS
 
 GPX_FILE_PATH = '../data/gpx/'
+ROUTES_INDEX_PATH = '../data/routes-index.csv'
 
 # Page config
 st.set_page_config(
@@ -17,12 +19,22 @@ st.set_page_config(
 gpx_files = [f for f in os.listdir(GPX_FILE_PATH) if f.endswith('.gpx')]
 gpx_files.sort()
 
+# GPX file to route name mapping dictionary
+routes_index = pd.read_csv(ROUTES_INDEX_PATH)
+gpx_files_to_route_names = {
+  row['file_name']: row['route_name']
+  for index, row in routes_index.iterrows()
+}
+route_names_to_gpx_files = {
+  v: k for k, v in gpx_files_to_route_names.items()
+}
+
 route1_col, route2_col, col3 = st.columns(3)
 
 with route1_col:
   selected_route_name_1 = st.selectbox(
     'Selecione uma rota',
-    gpx_files,
+    gpx_files_to_route_names.values(),
     index=None,
     placeholder='Digite ou selecione...'
   )
@@ -33,7 +45,7 @@ if selected_route_name_1:
   with route2_col:
     selected_route_name_2 = st.selectbox(
       'Comparar com',
-      [f for f in gpx_files if f != selected_route_name_1],  # Exclude first selected route
+      [f for f in gpx_files_to_route_names.values() if f != selected_route_name_1],  # Exclude first selected route
       index=None,
       placeholder='Digite ou selecione...'
     )
@@ -47,7 +59,7 @@ if selected_route_name_1:
     )
 
     # Load the route
-    route1 = Route(os.path.join(GPX_FILE_PATH, selected_route_name_1))
+    route1 = Route(os.path.join(GPX_FILE_PATH, route_names_to_gpx_files[selected_route_name_1]))
     
     # Display route stats in columns
     col1, col2, col3, col4, col5 = st.columns(5)
@@ -105,8 +117,8 @@ if selected_route_name_1:
       )
 
     # Load both routes
-    route1 = Route(os.path.join(GPX_FILE_PATH, selected_route_name_1))
-    route2 = Route(os.path.join(GPX_FILE_PATH, selected_route_name_2))
+    route1 = Route(os.path.join(GPX_FILE_PATH, route_names_to_gpx_files[selected_route_name_1]))
+    route2 = Route(os.path.join(GPX_FILE_PATH, route_names_to_gpx_files[selected_route_name_2]))
     
     # Create RouteGroup for comparison
     route_group = RouteGroup(
