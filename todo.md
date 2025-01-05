@@ -11,6 +11,7 @@
 - [x] Add a scatter plot with all routes, with distance vs elevation gain
 - [x] Adicionar um mapa mundi com todas as corridas na base
 - [ ] Add an option to view the topographical map tiles
+- [ ] Update `process-gpx.ipynb` with an option to only process new files
 - [ ] Other metrics
     - [x] Elevation gain / distance (elevation gain per km)
     - [ ] Longest ascent (horizontal and vertical distance)
