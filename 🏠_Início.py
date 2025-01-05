@@ -8,7 +8,7 @@ from route import Route, RouteGroup
 from utils import COLORS
 import numpy as np
 
-ROUTES_INDEX_PATH = '../data/routes-index.csv'
+ROUTES_INDEX_PATH = 'data/routes-index.csv'
 
 # Page config
 st.set_page_config(
@@ -45,9 +45,9 @@ st.markdown('## Mapa mundi')
 
 # Create a base map centered on the mean coordinates
 m = folium.Map(
-    location=[-17, -50],
-    # location=[df.data['latitude'].mean(), df.data['longitude'].mean()],
-    zoom_start=5,
+    # location=[-17, -50],
+    location=[df.data['latitude'].mean(), df.data['longitude'].mean()],
+    zoom_start=3,
     control_scale=True,  # Add distance scale
     prefer_canvas=True   # Better performance for large datasets
 )

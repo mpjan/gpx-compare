@@ -5,8 +5,8 @@ import pandas as pd
 from route import Route, RouteGroup
 from utils import COLORS
 
-GPX_FILE_PATH = '../data/gpx/'
-ROUTES_INDEX_PATH = '../data/routes-index.csv'
+GPX_FILE_PATH = 'data/gpx/'
+ROUTES_INDEX_PATH = 'data/routes-index.csv'
 
 # Page config
 st.set_page_config(
