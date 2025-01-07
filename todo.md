@@ -11,6 +11,7 @@
 - [x] Add a scatter plot with all routes, with distance vs elevation gain
 - [x] Adicionar um mapa mundi com todas as corridas na base
 - [ ] Add an option to view the topographical map tiles
+- [ ] Improve performance (@cache?)
 - [ ] Update `process-gpx.ipynb` with an option to only process new files
 - [ ] Other metrics
     - [x] Elevation gain / distance (elevation gain per km)
@@ -18,6 +19,7 @@
     - [ ] Longest descent (horizontal and vertical distance)
 - [ ] Add the slope classification to the interactive graph
 - [ ] Add round km markers to the map
+- [ ] Allow people to upload their own GPX files
 - [ ] Add waypoints as markers to the map and elevation profile
 - [ ] Calculate overall difficulty metric
 - [ ] Should I use an actual database, or is a CSV file enough?
